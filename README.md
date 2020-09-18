@@ -6,6 +6,8 @@ MoonScript is much nicer than Lua and leafo has fixed a lot of things about Lua 
 
 # Installing
 
+Note: for the time being I can only gurantee this works on NixOS unstable. Will likely also be fine on other linuxes.
+
 Just clone this repo:
 
 ```sh
