@@ -1,8 +1,8 @@
 # Selene
 
-Selene is a project template to quickly set up LOVE2D to run moonscript instead of Lua.
+Selene is a project template to quickly set up LOVE2D to run moonscript instead of Lua, *without* precompiling your `.moon` files to `.lua`
 
-MoonScript is much nicer than Lua and leafo has fixed a lot of things about Lua in making the language. 
+[MoonScript](https://github.com/leafo/moonscript) is extremely well suited to writing games with its object-oriented approach!
 
 # Installing
 
