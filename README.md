@@ -35,4 +35,4 @@ The template also includes some recommended setups but they don't *have* to be u
 
 Write all your code in `src/main.moon` and other files, just be sure to `require` what you need from `main.moon`!
 
-Yep, that's really it.
+Yep, that's really it. Just do `love .` in the current directory or `love selene` from outside it.
