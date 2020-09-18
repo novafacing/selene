@@ -1,6 +1,6 @@
-package.path = package.path .. ";./moonscript/?.lua"
-package.path = package.path .. ";./lulpeg/?.lua"
+package.path = package.path .. ";./lib/moonscript/?.lua"
+package.path = package.path .. ";./lib/lulpeg/?.lua"
 
 function love.conf(t)
-    require("moonscript.moonscript")
+    require("lib.moonscript.moonscript")
 end
