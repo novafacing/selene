@@ -1,0 +1,12 @@
+[submodule "moonscript"]
+	path = moonscript
+	url = ssh://git@github.com/novafacing/moonscript
+[submodule "lulpeg"]
+	path = lulpeg
+	url = ssh://git@github.com/novafacing/lulpeg
+[submodule "lib/lulpeg"]
+	path = lib/lulpeg
+	url = ssh://git@github.com/novafacing/lulpeg
+[submodule "lib/moonscript"]
+	path = lib/moonscript
+	url = ssh://git@github.com/novafacing/moonscript
