@@ -40,3 +40,7 @@ Yep, that's really it. Just do `love .` in the current directory or `love selene
 # Notes
 
 You'll notice that the embedded submodule is not moonscript master. Instead it is my own fork. All I have done is replace the C dependency `lpeg` with a drop-in replacement written in Lua, `lulpeg`. I'll update my moonscript repo from upstream periodically, but it isn't guaranteed to be constant.
+
+# Contributions and Bug Fixes
+
+Bug fixes and contributions are welcome! If you find any issues, just open an Issue and I'll take a look at it. I'm not going to formalize the process too much, because this is a tiny repo and I don't expect I'll add too much code to it. Any improvements are likewise appreciated!
