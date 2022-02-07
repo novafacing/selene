@@ -7,9 +7,9 @@ Selene is a project template to quickly set up LOVE2D to run moonscript instead 
 # Installing
 
 
-Note: for the time being I can only gurantee this works on NixOS unstable. Will likely also be fine on other linuxes.
+Note: for the time being I can only guarantee this works on NixOS unstable. Will likely also be fine on other linuxes.
 
-Just clone this repo (or, you can use it as a [template repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository):
+Just clone this repo (or, you can use it as a [template repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository)):
 
 ```sh
 $ git clone ssh://git@github.com/novafacing/selene.git
