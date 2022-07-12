@@ -3,4 +3,5 @@ package.path = package.path .. ";./lib/lulpeg/?.lua"
 
 function love.conf(t)
     require("lib.moonscript")
+    t.console = true
 end
