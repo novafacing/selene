@@ -15,7 +15,6 @@ demo = nil
 love.load = () ->
     require("src.demo")
     demo = DemoClass(SCREEN_WIDTH, SCREEN_HEIGHT)
-    lw.setMode(SCREEN_WIDTH, SCREEN_HEIGHT, {})
 
 love.keypressed = (key, scancode, isrepeat) ->
     if key == "escape"
