@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    # Build the applications
+    - uses: nhartland/love-build@master
+      with:
+       app_name: 'my_selene_game'
+       love_version: '11.4'
+    # Upload the built applications
+    - uses: actions/upload-artifact@v1
+      with:
+        name: built-applications
+        path: 'release'
