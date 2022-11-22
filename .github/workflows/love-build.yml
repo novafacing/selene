@@ -15,6 +15,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
     # Build the applications
     - uses: nhartland/love-build@master
       with:
