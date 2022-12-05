@@ -22,7 +22,7 @@ jobs:
     - name: Install Lua Packages
       run: luarocks install moonscript
     - name: Compile MoonScript
-      run: ./.github/workflows/compile.py
+      run: python .github/workflows/compile.py
     # Build the applications
     - uses: nhartland/love-build@master
       with:
