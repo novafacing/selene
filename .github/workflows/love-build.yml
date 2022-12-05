@@ -20,7 +20,7 @@ jobs:
     - uses: leafo/gh-actions-lua@v9
     - uses: leafo/gh-actions-luarocks@v4
     - name: Install Lua Packages
-      run: luarocks install moonscript
+      run: luarocks install moonscript --dev
     - name: Compile MoonScript
       run: python .github/workflows/compile.py
     # Build the applications
