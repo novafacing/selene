@@ -136,7 +136,7 @@ class SeleneBuild
             conffile\write(conf)
             conffile\close()
         else
-            print "Aborting"
+            print "Aborting: '#{answer}' is not y"
             rv = ERR
         
         return rv
