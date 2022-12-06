@@ -87,6 +87,14 @@ class SeleneBuild
         if answer == "y" or yes
             traversal = DirectoryTraversal(@dist_file)
             traversal\traverse(@src)
+
+            conffile = io.open("conf.lua", "r")
+            conf = conffile\read("*a")
+            conffile\close()
+            conf\gsub("require(\"lib.moonscript\")", "")
+            conffile = io.open("conf.lua", "w")
+            conffile\write(conf)
+            conffile\close()
         else
             print "Aborting"
             return
