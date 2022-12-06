@@ -103,12 +103,6 @@ class SeleneBuild
         rv = OK
 
         -- Prompt for y/n, this is a dangerous operation
-        io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
-
-        if yes
-            answer = "y"
-        else
-            answer = io.read()
 
         git_status = io.popen("git status -s")
         if git_status\read("*a") != "" and not yes
@@ -121,6 +115,13 @@ class SeleneBuild
         if rv == ERR
             print "Build errors occured. Aborting."
             return rv
+
+
+        if yes
+            answer = "y"
+        else
+            io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
+            answer = io.read()
 
         if answer == "y" or yes
             traversal = DirectoryTraversal(@dist_file)
