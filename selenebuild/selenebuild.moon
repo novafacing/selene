@@ -138,11 +138,15 @@ class SeleneBuild
             rv = traversal\traverse(@src)
 
             for file, blocklist in ipairs BLOCKLIST_LINES
+                print "Removing blocklist lines from #{file}"
+
                 file_h = io.open(file, "r")
                 content = file_h\read("*a")
                 file_h\close()
+
                 for _, line in ipairs blocklist
                     content = content\gsub(line, "")
+
                 file_h = io.open(file, "w")
                 file_h\write(content)
                 file_h\close()
