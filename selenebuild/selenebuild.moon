@@ -134,7 +134,7 @@ class SeleneBuild
             conf = conffile\read("*a")
             conffile\close()
             conf\gsub("require(\"lib.moonscript\")", "")
-            confi\gsub("package.path.*$", "")
+            conf\gsub("package.path.*$", "")
             conffile = io.open("conf.lua", "w")
             conffile\write(conf)
             conffile\close()
