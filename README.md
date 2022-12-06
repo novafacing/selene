@@ -18,6 +18,7 @@ games with its object-oriented approach!
   - [Writing Your Game](#writing-your-game)
 - [Unit Testing](#unit-testing)
 - [Notes](#notes)
+- [Useful Documentation](#useful-documentation)
 - [Contributions and Bug Fixes](#contributions-and-bug-fixes)
 - [Thanks](#thanks)
 
@@ -100,6 +101,11 @@ All I have done is replace the C dependency `lpeg` with a drop-in replacement wr
 `lulpeg`. I'll update my MoonScript and LuLPeg repos from upstream periodically, and feel free
 to file an issue if they breaking due to being outdated.
 
+# Useful Documentation
+
+* [Love2D Documentation](https://love2d.org/wiki/Main_Page)
+* [Moonscript Documentation](https://moonscript.org/)
+
 # Contributions and Bug Fixes
 
 Bug fixes and contributions are welcome! If you find any issues, just open an Issue and I'll
@@ -110,4 +116,3 @@ and I don't expect I'll add too much code to it. Any improvements are likewise a
 
 Thanks for using Selene! I hope it helps you create great games, and if you do, please open a PR to
 add a gif or screenshot of your game and a link to it to this README so you can show it off!
->>>>>>> af4ce6d5a9d3334d2cdc6de8983fce084a5ee332
