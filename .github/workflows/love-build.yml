@@ -27,6 +27,8 @@ jobs:
         luarocks install argparse --dev
         luarocks install busted --dev
         luarocks install moonscript --dev
+    - name: Test Project
+      run: moon selenebuild/selenebuild.moon -t
     - name: Compile Project
       run: moon selenebuild/selenebuild.moon src -d -y
     # Build the applications
