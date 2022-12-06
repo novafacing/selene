@@ -1,6 +1,9 @@
 -- Selene Build Script
 require("lfs")
 
+ERR = 1
+OK = 0
+
 class DirectoryTraversal 
     new: (func) =>
         -- Instantiate a new DirectoryTraversal that will apply a function to file paths
@@ -13,6 +16,7 @@ class DirectoryTraversal
 
         traverse_stack = [ "#{path}/#{entry}" for entry in lfs.dir(path) ]
         seen = {}
+        rv = OK
 
         while #traverse_stack > 0
             entry = table.remove(traverse_stack)
@@ -35,7 +39,10 @@ class DirectoryTraversal
                 for sentry in lfs.dir(entry)
                     table.insert(traverse_stack, "#{entry}/#{sentry}")
             else
-                    @func(entry)
+                    if @func(entry)
+                        rv = ERR
+
+        return rv
 
 class SeleneBuild
     new: (src) =>
@@ -46,32 +53,54 @@ class SeleneBuild
 
     build_file: (path) =>
         -- Build a .moon file. Called as a callback by the
-        -- directory traversal
+        -- directory traversal. Returns OK on success, ERR on failure
+        rv = OK
         if path\match("^.+%.moon$")
             fd = io.popen("moonc #{path}")
-            fd\close()
+            output = fd\read("*a")
+
+            err = fd\close()
+            if err
+                print "Error building #{path}"
+                print output
+                rv = ERR
+        return rv
 
     clean_file: (path) =>
+        -- Clean a .lua file. Called as a callback by the
+        -- directory traversal. Returns OK on success, and cannot fail
         if path\match("^.+%.lua$")
             os.remove(path)
             print "Removed #{path}"
 
+        return OK
+
     dist_file: (path) =>
+        -- Clean a .moon file. Called as a callback by the
+        -- directory traversal. Returns OK on success, and cannot fail
+
         if path\match("^.+%.moon$")
             os.remove(path)
             print "Removed #{path}"
 
-    run: () =>
-        -- Run the build
+        return OK
+
+    build: () =>
+        -- Run the build. Returns the status of the build
 
         traversal = DirectoryTraversal(@build_file)
-        traversal\traverse(@src)
+        return traversal\traverse(@src)
 
     clean: () =>
+        -- Clean the source directory of build files. Returns the status of the clean
+
         traversal = DirectoryTraversal(@clean_file)
-        traversal\traverse(@src)
+        return traversal\traverse(@src)
 
     dist: (yes) =>
+        -- Build for distribution by building lua files and removing moonscript files.
+
+
         -- Prompt for y/n, this is a dangerous operation
         io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
         answer = io.read()
@@ -79,10 +108,10 @@ class SeleneBuild
         git_status = io.popen("git status -s")
         if git_status\read("*a") != "" and not yes
             print "Git tree is dirty. Commit your changes or use the --yes flag"
-            return
+            return ERR
         git_status\close()
 
-        @\run!
+        @\build!
 
         if answer == "y" or yes
             traversal = DirectoryTraversal(@dist_file)
@@ -97,10 +126,25 @@ class SeleneBuild
             conffile\close()
         else
             print "Aborting"
-            return
+            return ERR
+        
+        return OK
 
-    test: () =>
-        io.popen("busted -P Test.+%.moon$ #{@src}")
+    test: (patterns) =>
+        rv = OK
+        for _, pattern in ipairs patterns
+            print("Running tests with pattern #{pattern}")
+            result = io.popen("busted -p #{pattern} #{@src}")
+            output = result\read("*a")
+            err = result\close!
+            if err
+                rv = ERR
+                print(output)
+        if rv == ERR
+            print("Tests failed")
+        else
+            print("All tests passed")
+        return rv
 
 
 main = (arg) ->
@@ -112,6 +156,7 @@ main = (arg) ->
     parser\flag("-d --dist", "Build a distribution and remove all moonscript files after building")\args("?")
     parser\flag("-y --yes", "Answer yes to all prompts. THIS MAY BE DANGEROUS!")\args("?")
     parser\flag("-t --test", "Run tests")\args("?")
+    parser\option("-p --pattern", "Pattern(s) to use to search for test files")\args("+")\default("Test.+%.moon")\defmode("u")
     args = parser\parse(arg)
 
     if #arg < 1
@@ -121,13 +166,13 @@ main = (arg) ->
     build = SeleneBuild(args["src"])
 
     if args["test"]
-        build\test!
+        os.exit(build\test(args["pattern"]))
     elseif args["clean"]
         build\clean!
     elseif args["dist"]
         build\dist(args["yes"])
     else
-        build\run!
+        build\build!
 
     return 0
 
