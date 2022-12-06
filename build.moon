@@ -11,15 +11,19 @@ BLOCKLIST_LINES =
         "package%.path = package%.path %.%. \";%./lib/lulpeg/%?%.lua\"[^\n]*\n",
     }
 
-class DirectoryTraversal 
-    new: (func) =>
-        -- Instantiate a new DirectoryTraversal that will apply a function to file paths
-        -- recursively
+class SeleneBuild
+    new: (src) =>
+        -- Instantiate a new build of the directory
+        -- given in src
 
-        @func = func
+        @src = src
 
-    traverse: (path) =>
+    directory_traverse: (func, path) =>
         -- Traverse a directory recursively and apply a function to files found
+        -- Returns OK on success, ERR on failure from the func result
+        -- @param func The function to apply to files
+        -- @param path The path to traverse from
+
 
         traverse_stack = [ "#{path}/#{entry}" for entry in lfs.dir(path) ]
         seen = {}
@@ -46,17 +50,11 @@ class DirectoryTraversal
                 for sentry in lfs.dir(entry)
                     table.insert(traverse_stack, "#{entry}/#{sentry}")
             else
-                    if not @func(entry)
+                    if not func(entry)
                         rv = ERR
 
         return rv
 
-class SeleneBuild
-    new: (src) =>
-        -- Instantiate a new build of the directory
-        -- given in src
-
-        @src = src
 
     build_file: (path) =>
         -- Build a .moon file. Called as a callback by the
@@ -95,14 +93,12 @@ class SeleneBuild
     build: () =>
         -- Run the build. Returns the status of the build
 
-        traversal = DirectoryTraversal(@build_file)
-        return traversal\traverse(@src)
+        return @\traverse(@build_file, @src)
 
     clean: () =>
         -- Clean the source directory of build files. Returns the status of the clean
 
-        traversal = DirectoryTraversal(@clean_file)
-        return traversal\traverse(@src)
+        return @\traverse(@clean_file, @src)
 
     dist: (yes) =>
         -- Build for distribution by building lua files and removing moonscript files.
@@ -114,7 +110,7 @@ class SeleneBuild
         git_status = io.popen("git status -s")
         if git_status\read("*a") != "" and not yes
             print "Git tree is dirty. Commit changes and commit/remove untracked files or use the --yes flag"
-            print "Maybe you forgot to run 'selenebuild.moon -c'"
+            print "Maybe you forgot to run 'build.moon -c'"
             rv = ERR
             return rv
         git_status\close()
@@ -134,8 +130,7 @@ class SeleneBuild
             answer = io.read()
 
         if answer == "y" or yes
-            traversal = DirectoryTraversal(@dist_file)
-            rv = traversal\traverse(@src)
+            rv = @\traverse(@dist_file, @src)
 
             for file, blocklist in pairs BLOCKLIST_LINES
                 print "Removing blocklist lines from #{file}"
@@ -178,7 +173,7 @@ class SeleneBuild
 main = (arg) ->
     -- Create and run the build
     argparse = require("argparse")
-    parser = argparse("selenebuild", "Build a Selene project")
+    parser = argparse("build", "Build a Selene project")
     parser\argument("src", "Source directory")
     parser\flag("-c --clean", "Clean the build directory (remove lua build files)")\args("?")
     parser\flag("-d --dist", "Build a distribution and remove all moonscript files after building")\args("?")

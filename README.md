@@ -111,11 +111,11 @@ Don't forget the `--dev`, it's important!
 
 ## Testing
 
-There is a build/test script `selenebuild` provided that works automatically with the
+There is a build/test script `build.moon` provided that works automatically with the
 template repo. You can invoke it to run tests like:
 
 ```sh
-$ moon selenebuild/selenebuild.moon --test
+$ moon build.moon --test
 ```
 
 It will run `busted` tests on all files matching a pattern, which defaults to 
@@ -123,7 +123,7 @@ It will run `busted` tests on all files matching a pattern, which defaults to
 so:
 
 ```sh
-$ moon selenebuild/selenebuild.moon src --test --pattern '.+Test%.moon'
+$ moon build.moon src --test --pattern '.+Test%.moon'
 ```
 
 ## Release Builds
@@ -140,11 +140,11 @@ This will spin up a pipeline, build your release, and output the files to `relea
 
 ### Debugging Release Builds
 
-The release build uses `selenebuild.moon` to compile all your `.moon` files to `.lua`.
+The release build uses `build.moon` to compile all your `.moon` files to `.lua`.
 If you have an issue, you can invoke it locally:
 
 ```sh
-$ moon selenebuild/selenebuild.moon src
+$ moon build.moon src
 ```
 
 This will display any build errors encountered.
@@ -152,7 +152,7 @@ This will display any build errors encountered.
 You can clean up the lua files from the source tree with:
 
 ```sh
-$ moon selenebuild/selenebuild.moon src --clean
+$ moon build.moon src --clean
 ```
 
 But be aware this will delete *all* `.lua` files in `src`!

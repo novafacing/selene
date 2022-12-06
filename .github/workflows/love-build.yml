@@ -34,9 +34,9 @@ jobs:
       run: |
         luarocks make --dev
     - name: Test Project
-      run: moon selenebuild/selenebuild.moon src -t
+      run: moon build.moon src -t
     - name: Compile Project
-      run: moon selenebuild/selenebuild.moon src -d -y
+      run: moon build.moon src -d -y
     # Build the applications
     - uses: nhartland/love-build@master
       with:
