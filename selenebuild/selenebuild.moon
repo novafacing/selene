@@ -108,6 +108,7 @@ class SeleneBuild
         if git_status\read("*a") != "" and not yes
             print "Git tree is dirty. Commit your changes or use the --yes flag"
             rv = ERR
+            return rv
         git_status\close()
 
         rv = @\build!
@@ -117,6 +118,7 @@ class SeleneBuild
             return rv
 
 
+        answer = "n"
         if yes
             answer = "y"
         else
