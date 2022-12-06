@@ -37,8 +37,6 @@ class DirectoryTraversal
             else
                     @func(entry)
 
-
-
 class SeleneBuild
     new: (src) =>
         -- Instantiate a new build of the directory
@@ -101,6 +99,10 @@ class SeleneBuild
             print "Aborting"
             return
 
+    test: () =>
+        io.popen("busted -P Test.+%.moon$ #{@src}")
+
+
 main = (arg) ->
     -- Create and run the build
     argparse = require("argparse")
@@ -109,6 +111,7 @@ main = (arg) ->
     parser\flag("-c --clean", "Clean the build directory (remove lua build files)")\args("?")
     parser\flag("-d --dist", "Build a distribution and remove all moonscript files after building")\args("?")
     parser\flag("-y --yes", "Answer yes to all prompts. THIS MAY BE DANGEROUS!")\args("?")
+    parser\flag("-t --test", "Run tests")\args("?")
     args = parser\parse(arg)
 
     if #arg < 1
@@ -117,12 +120,14 @@ main = (arg) ->
 
     build = SeleneBuild(args["src"])
 
-    if args["clean"]
-        build\clean()
+    if args["test"]
+        build\test!
+    elseif args["clean"]
+        build\clean!
     elseif args["dist"]
         build\dist(args["yes"])
     else
-        build\run()
+        build\run!
 
     return 0
 

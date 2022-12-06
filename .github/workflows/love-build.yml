@@ -18,15 +18,21 @@ jobs:
       with:
         submodules: recursive
     - uses: leafo/gh-actions-lua@v9
+      with:
+        buildCache: false
     - uses: leafo/gh-actions-luarocks@v4
     - name: Install Lua Packages
-      run: luarocks install moonscript --dev
-    - name: Compile MoonScript
-      run: python .github/workflows/compile.py
+      run: |
+        luarocks install luafilesystem --dev
+        luarocks install argparse --dev
+        luarocks install busted --dev
+        luarocks install moonscript --dev
+    - name: Compile Project
+      run: moon selenebuild/selenebuild.moon src -d -y
     # Build the applications
     - uses: nhartland/love-build@master
       with:
-       app_name: 'my_selene_game'
+       app_name: ${{ github.event.repository.name }}
        love_version: '11.4'
     # Upload the built applications
     - uses: actions/upload-artifact@v1
