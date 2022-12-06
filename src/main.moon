@@ -7,32 +7,21 @@
     window: lw
 } = love
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 480
-
-demo = nil
+game = nil
 
 love.load = () ->
-    require("src.demo")
-    demo = DemoClass(SCREEN_WIDTH, SCREEN_HEIGHT)
+    -- Called when the game is loaded
+    require("src.Game")
+    game = Game!
 
 love.keypressed = (key, scancode, isrepeat) ->
-    if key == "escape"
-        le.quit!
+    -- Called when a key is pressed
+    game\keypressed(key, scancode, isrepeat)
 
 love.update = (dt) ->
-    dx = 0
-    dy = 0
-    if lk.isDown("up")
-        dy -= 1
-    if lk.isDown("down")
-        dy += 1
-    if lk.isDown("left")
-        dx -= 1
-    if lk.isDown("right")
-        dx += 1
-    demo\move(dx, dy)
+    -- Called every update interval
+    game\update(dt)
 
 love.draw = (dt) ->
-    lg.clear(0, 0.6, 0.8)
-    demo\draw!
+    -- Called every draw interval
+    game\draw(dt)

@@ -1,11 +1,26 @@
 # Selene 🌙
 
-Selene is a project template to quickly set up [LOVE2D](https://love2d.org) to run games written in
-[MoonScript](https://moonscript.org) instead of plain Lua, *without* precompiling your `.moon`
-files to `.lua` like some other projects require. 
+Selene is a project template to quickly set up LOVE2D to run moonscript instead of Lua,
+*without* precompiling your `.moon` files to `.lua`
 
-[MoonScript](https://github.com/leafo/moonscript) is extremely well suited to writing games with its
-object-oriented approach!
+[MoonScript](https://github.com/leafo/moonscript) is extremely well suited to writing
+games with its object-oriented approach!
+
+# Table of Contents
+
+- [Selene 🌙](#selene-)
+- [Table of Contents](#table-of-contents)
+- [Installing](#installing)
+  - [Install LOVE2D](#install-love2d)
+  - [Create Your Game](#create-your-game)
+- [Using](#using)
+  - [First Run](#first-run)
+  - [Writing Your Game](#writing-your-game)
+- [Unit Testing](#unit-testing)
+- [Notes](#notes)
+- [Useful Documentation](#useful-documentation)
+- [Contributions and Bug Fixes](#contributions-and-bug-fixes)
+- [Thanks](#thanks)
 
 # Installing
 
@@ -62,12 +77,34 @@ Now that you're all set up, write your game! Your source code should go in [the 
 can add as many files as you want. [The main file](src/main.moon) gives an example of how to require another
 file (in this case `demo.moon`) to make your game's code modular.
 
+# Unit Testing
+
+An example unit test is given in [src/util/TestVector2.moon] that uses `busted` for unit
+testing. You will need to install `busted` to run the tests:
+
+```sh
+$ luarocks install busted
+```
+
+And then you can run them with:
+
+```sh
+$ busted src/util/TestVector2.moon
+●●●●●
+5 successes / 0 failures / 0 errors / 0 pending : 0.007048 seconds
+```
+
 # Notes
 
 You'll notice that the embedded submodule is not moonscript master. Instead it is my own fork. 
 All I have done is replace the C dependency `lpeg` with a drop-in replacement written in Lua, 
 `lulpeg`. I'll update my MoonScript and LuLPeg repos from upstream periodically, and feel free
 to file an issue if they breaking due to being outdated.
+
+# Useful Documentation
+
+* [Love2D Documentation](https://love2d.org/wiki/Main_Page)
+* [Moonscript Documentation](https://moonscript.org/)
 
 # Contributions and Bug Fixes
 
