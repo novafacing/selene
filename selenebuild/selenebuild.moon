@@ -59,8 +59,8 @@ class SeleneBuild
             fd = io.popen("moonc #{path}")
             output = fd\read("*a")
 
-            err = fd\close()
-            if err
+            status = fd\close()
+            if not status 
                 print "Error building #{path}"
                 print output
                 rv = ERR
@@ -100,22 +100,29 @@ class SeleneBuild
     dist: (yes) =>
         -- Build for distribution by building lua files and removing moonscript files.
 
+        rv = OK
 
         -- Prompt for y/n, this is a dangerous operation
         io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
         answer = io.read()
 
         git_status = io.popen("git status -s")
+
         if git_status\read("*a") != "" and not yes
             print "Git tree is dirty. Commit your changes or use the --yes flag"
-            return ERR
+            rv = ERR
+
         git_status\close()
 
-        @\build!
+        rv = @\build!
+
+        if rv == ERR
+            print "Build errors occured. Aborting."
+            return rv
 
         if answer == "y" or yes
             traversal = DirectoryTraversal(@dist_file)
-            traversal\traverse(@src)
+            rv = traversal\traverse(@src)
 
             conffile = io.open("conf.lua", "r")
             conf = conffile\read("*a")
@@ -126,9 +133,9 @@ class SeleneBuild
             conffile\close()
         else
             print "Aborting"
-            return ERR
+            rv = ERR
         
-        return OK
+        return rv
 
     test: (patterns) =>
         rv = OK
@@ -136,14 +143,16 @@ class SeleneBuild
             print("Running tests with pattern #{pattern}")
             result = io.popen("busted -p #{pattern} #{@src}")
             output = result\read("*a")
-            err = result\close!
-            if err
+            status = result\close!
+            if not status
                 rv = ERR
                 print(output)
+
         if rv == ERR
             print("Tests failed")
         else
             print("All tests passed")
+
         return rv
 
 
@@ -165,15 +174,17 @@ main = (arg) ->
 
     build = SeleneBuild(args["src"])
 
+    rv = OK
+
     if args["test"]
-        os.exit(build\test(args["pattern"]))
+        rv = build\test(args["pattern"])
     elseif args["clean"]
-        build\clean!
+        rv = build\clean!
     elseif args["dist"]
-        build\dist(args["yes"])
+        rv = build\dist(args["yes"])
     else
-        build\build!
+        rv = build\build!
 
-    return 0
+    return rv
 
-main(arg)
+os.exit(main(arg))
