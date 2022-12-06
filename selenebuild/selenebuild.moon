@@ -59,7 +59,7 @@ class SeleneBuild
             print "Removed #{path}"
 
     dist_file: (path) =>
-        if path\match("^.%.moon$")
+        if path\match("^.+%.moon$")
             os.remove(path)
             print "Removed #{path}"
 
