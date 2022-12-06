@@ -73,6 +73,10 @@ class SeleneBuild
         traversal = DirectoryTraversal(@clean_file)
         traversal\traverse(@src)
 
+    dist: () =>
+        traversal = DirectoryTraversal(@dist_file)
+        traversal\traverse(@src)
+
 
 main = (arg) ->
     -- Create and run the build
@@ -97,7 +101,7 @@ main = (arg) ->
 
     if args["dist"]
         -- Prompt for y/n, this is a dangerous operation
-        print "Are you sure you want to remove all moonscript files? (y/n)"
+        io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
         answer = io.read()
 
         if answer == "y" or args["yes"] == true
