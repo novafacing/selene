@@ -137,7 +137,7 @@ class SeleneBuild
             traversal = DirectoryTraversal(@dist_file)
             rv = traversal\traverse(@src)
 
-            for file, blocklist in ipairs BLOCKLIST_LINES
+            for file, blocklist in pairs BLOCKLIST_LINES
                 print "Removing blocklist lines from #{file}"
 
                 file_h = io.open(file, "r")
