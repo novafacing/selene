@@ -84,6 +84,8 @@ class SeleneBuild
             return
         git_status\close()
 
+        @\run!
+
         if answer == "y" or yes
             traversal = DirectoryTraversal(@dist_file)
             traversal\traverse(@src)
@@ -117,11 +119,10 @@ main = (arg) ->
 
     if args["clean"]
         build\clean()
+    elseif args["dist"]
+        build\dist(args["yes"])
     else
         build\run()
-
-    if args["dist"]
-        build\dist(args["yes"])
 
     return 0
 
