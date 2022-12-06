@@ -106,7 +106,8 @@ class SeleneBuild
 
         git_status = io.popen("git status -s")
         if git_status\read("*a") != "" and not yes
-            print "Git tree is dirty. Commit your changes or use the --yes flag"
+            print "Git tree is dirty. Commit changes and commit/remove untracked files or use the --yes flag"
+            print "Maybe you forgot to run 'selenebuild.moon -c'"
             rv = ERR
             return rv
         git_status\close()
