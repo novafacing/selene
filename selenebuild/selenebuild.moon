@@ -73,10 +73,23 @@ class SeleneBuild
         traversal = DirectoryTraversal(@clean_file)
         traversal\traverse(@src)
 
-    dist: () =>
-        traversal = DirectoryTraversal(@dist_file)
-        traversal\traverse(@src)
+    dist: (yes) =>
+        -- Prompt for y/n, this is a dangerous operation
+        io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
+        answer = io.read()
 
+        git_status = io.popen("git status -s")
+        if git_status\read("*a") != "" and not yes
+            print "Git tree is dirty. Commit your changes or use the --yes flag"
+            return
+        git_status\close()
+
+        if answer == "y" or yes
+            traversal = DirectoryTraversal(@dist_file)
+            traversal\traverse(@src)
+        else
+            print "Aborting"
+            return
 
 main = (arg) ->
     -- Create and run the build
@@ -100,15 +113,7 @@ main = (arg) ->
         build\run()
 
     if args["dist"]
-        -- Prompt for y/n, this is a dangerous operation
-        io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
-        answer = io.read()
-
-        if answer == "y" or args["yes"] == true
-            build\dist()
-        else
-            print "Aborting"
-            return
+        build\dist(args["yes"])
 
     return 0
 
