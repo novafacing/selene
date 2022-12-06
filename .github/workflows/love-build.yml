@@ -17,6 +17,15 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+    # For some reason github.
+    - name: Output Project Name
+      id: project_name
+      run: |
+        export NAME="${GITHUB_REPOSITORY#*/}"
+        echo "name=${NAME}" >> $GITHUB_OUTPUT
+    - name: Display Project Name
+      run: |
+        echo "Building Project '${{ steps.project_name.outputs.name }}'"
     - uses: leafo/gh-actions-lua@v9
       with:
         buildCache: false
@@ -34,10 +43,10 @@ jobs:
     # Build the applications
     - uses: nhartland/love-build@master
       with:
-       app_name: ${{ github.event.repository.name }}
+       app_name: ${{ steps.project_name.outputs.name }}
        love_version: '11.4'
     # Upload the built applications
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
         name: built-applications
         path: 'release'

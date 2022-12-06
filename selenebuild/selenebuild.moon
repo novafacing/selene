@@ -39,7 +39,7 @@ class DirectoryTraversal
                 for sentry in lfs.dir(entry)
                     table.insert(traverse_stack, "#{entry}/#{sentry}")
             else
-                    if @func(entry)
+                    if not @func(entry)
                         rv = ERR
 
         return rv
@@ -104,14 +104,16 @@ class SeleneBuild
 
         -- Prompt for y/n, this is a dangerous operation
         io.write "Building distribution. Are you want to remove all moonscript files? (y/n) "
-        answer = io.read()
+
+        if yes
+            answer = "y"
+        else
+            answer = io.read()
 
         git_status = io.popen("git status -s")
-
         if git_status\read("*a") != "" and not yes
             print "Git tree is dirty. Commit your changes or use the --yes flag"
             rv = ERR
-
         git_status\close()
 
         rv = @\build!
@@ -128,6 +130,7 @@ class SeleneBuild
             conf = conffile\read("*a")
             conffile\close()
             conf\gsub("require(\"lib.moonscript\")", "")
+            confi\gsub("package.path.*$", "")
             conffile = io.open("conf.lua", "w")
             conffile\write(conf)
             conffile\close()
