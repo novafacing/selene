@@ -32,10 +32,7 @@ jobs:
     - uses: leafo/gh-actions-luarocks@v4
     - name: Install Lua Packages
       run: |
-        luarocks install luafilesystem --dev
-        luarocks install argparse --dev
-        luarocks install busted --dev
-        luarocks install moonscript --dev
+        luarocks make --dev
     - name: Test Project
       run: moon selenebuild/selenebuild.moon src -t
     - name: Compile Project

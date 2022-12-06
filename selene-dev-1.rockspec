@@ -13,7 +13,7 @@ Selene is a project template to quickly set up LOVE2D to run moonscript instead 
 dependencies = {
    "lua >= 5.2",
    "busted >= 2.0.0",
-   "moonscript >= 0.5.0",
+   "moonscript == dev-1",
    "luafilesystem >= 1.8.0",
    "argparse >= 0.7.1"
 }
