@@ -4,6 +4,13 @@ require("lfs")
 ERR = 1
 OK = 0
 
+BLOCKLIST_LINES =
+    ["conf.lua"]: {
+        "%s*require%(\"lib.moonscript\"%)[^\n]*",
+        "package%.path = package%.path %.%. \";%./lib/moonscript/%?%.lua\"[^\n]*\n",
+        "package%.path = package%.path %.%. \";%./lib/lulpeg/%?%.lua\"[^\n]*\n",
+    }
+
 class DirectoryTraversal 
     new: (func) =>
         -- Instantiate a new DirectoryTraversal that will apply a function to file paths
@@ -130,14 +137,15 @@ class SeleneBuild
             traversal = DirectoryTraversal(@dist_file)
             rv = traversal\traverse(@src)
 
-            conffile = io.open("conf.lua", "r")
-            conf = conffile\read("*a")
-            conffile\close()
-            conf\gsub("require(\"lib.moonscript\")", "")
-            conf\gsub("package.path.*$", "")
-            conffile = io.open("conf.lua", "w")
-            conffile\write(conf)
-            conffile\close()
+            for file, blocklist in ipairs BLOCKLIST_LINES
+                file_h = io.open(file, "r")
+                content = file_h\read("*a")
+                file_h\close()
+                for _, line in ipairs blocklist
+                    content = content\gsub(line, "")
+                file_h = io.open(file, "w")
+                file_h\write(content)
+                file_h\close()
         else
             print "Aborting: '#{answer}' is not y"
             rv = ERR
