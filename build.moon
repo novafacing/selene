@@ -11,6 +11,42 @@ BLOCKLIST_LINES =
         "package%.path = package%.path %.%. \";%./lib/lulpeg/%?%.lua\"[^\n]*\n",
     }
 
+export traverse = (func, path) ->
+    -- Traverse a directory recursively and apply a function to files found
+    -- Returns OK on success, ERR on failure from the func result
+    -- @param func The function to apply to files
+    -- @param path The path to traverse from
+
+    traverse_stack = [ "#{path}/#{entry}" for entry in lfs.dir(path) ]
+    seen = {}
+    rv = OK
+
+    while #traverse_stack > 0
+        entry = table.remove(traverse_stack)
+
+        filename = entry\match("([^/]+)$")
+
+        -- Skip builtin traversals
+        if filename == "." or filename == ".."                
+            continue
+
+        -- If we have seen this entry before, skip it
+        if #[e for _, e in ipairs seen when e == entry] != 0
+            continue
+
+
+        table.insert(seen, entry)
+
+        -- Recurse on directories and call the callback on files
+        if lfs.attributes(entry, "mode") == "directory"
+            for sentry in lfs.dir(entry)
+                table.insert(traverse_stack, "#{entry}/#{sentry}")
+        else
+                if not func(entry)
+                    rv = ERR
+
+    return rv
+
 class SeleneBuild
     new: (src) =>
         -- Instantiate a new build of the directory
@@ -18,42 +54,6 @@ class SeleneBuild
 
         @src = src
 
-    directory_traverse: (func, path) =>
-        -- Traverse a directory recursively and apply a function to files found
-        -- Returns OK on success, ERR on failure from the func result
-        -- @param func The function to apply to files
-        -- @param path The path to traverse from
-
-
-        traverse_stack = [ "#{path}/#{entry}" for entry in lfs.dir(path) ]
-        seen = {}
-        rv = OK
-
-        while #traverse_stack > 0
-            entry = table.remove(traverse_stack)
-
-            filename = entry\match("([^/]+)$")
-
-            -- Skip builtin traversals
-            if filename == "." or filename == ".."                
-                continue
-
-            -- If we have seen this entry before, skip it
-            if #[e for _, e in ipairs seen when e == entry] != 0
-                continue
-
-
-            table.insert(seen, entry)
-
-            -- Recurse on directories and call the callback on files
-            if lfs.attributes(entry, "mode") == "directory"
-                for sentry in lfs.dir(entry)
-                    table.insert(traverse_stack, "#{entry}/#{sentry}")
-            else
-                    if not func(entry)
-                        rv = ERR
-
-        return rv
 
 
     build_file: (path) =>
@@ -93,12 +93,12 @@ class SeleneBuild
     build: () =>
         -- Run the build. Returns the status of the build
 
-        return @\traverse(@build_file, @src)
+        return traverse(@\build_file, @src)
 
     clean: () =>
         -- Clean the source directory of build files. Returns the status of the clean
 
-        return @\traverse(@clean_file, @src)
+        return traverse(@\clean_file, @src)
 
     dist: (yes) =>
         -- Build for distribution by building lua files and removing moonscript files.
@@ -130,7 +130,7 @@ class SeleneBuild
             answer = io.read()
 
         if answer == "y" or yes
-            rv = @\traverse(@dist_file, @src)
+            rv = traverse(@\dist_file, @src)
 
             for file, blocklist in pairs BLOCKLIST_LINES
                 print "Removing blocklist lines from #{file}"
