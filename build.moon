@@ -11,7 +11,7 @@ BLOCKLIST_LINES =
         "package%.path = package%.path %.%. \";%./lib/lulpeg/%?%.lua\"[^\n]*\n",
     }
 
-export traverse = (func, path) ->
+export traverse = (func, path, dirs) ->
     -- Traverse a directory recursively and apply a function to files found
     -- Returns OK on success, ERR on failure from the func result
     -- @param func The function to apply to files
@@ -26,8 +26,8 @@ export traverse = (func, path) ->
 
         filename = entry\match("([^/]+)$")
 
-        -- Skip builtin traversals
-        if filename == "." or filename == ".."                
+        -- Skip builtin traversals and nonexistent files/dirs
+        if filename == "." or filename == ".." or lfs.attributes(entry) == nil
             continue
 
         -- If we have seen this entry before, skip it
@@ -41,9 +41,12 @@ export traverse = (func, path) ->
         if lfs.attributes(entry, "mode") == "directory"
             for sentry in lfs.dir(entry)
                 table.insert(traverse_stack, "#{entry}/#{sentry}")
+
+            if dirs and not func(entry)
+                rv = ERR
         else
-                if not func(entry)
-                    rv = ERR
+            if not func(entry)
+                rv = ERR
 
     return rv
 
@@ -90,15 +93,31 @@ class SeleneBuild
 
         return OK
 
+    delete_all: (path) =>
+        -- Delete a file or directory. Called as a callback by the
+        -- directory traversal. Returns OK on success, and cannot fail
+
+        if lfs.attributes(path, "mode") == "directory"
+            for entry in lfs.dir(path)
+                print "Removing #{path}/#{entry}"
+                os.remove("#{path}/#{entry}")
+            print "Removing #{path}"
+            os.remove(path)
+        else
+            print "Removing #{path}"
+            os.remove(path)
+
+        return OK
+
     build: () =>
         -- Run the build. Returns the status of the build
 
-        return traverse(@\build_file, @src)
+        return traverse(@\build_file, @src, false)
 
     clean: () =>
         -- Clean the source directory of build files. Returns the status of the clean
 
-        return traverse(@\clean_file, @src)
+        return traverse(@\clean_file, @src, false)
 
     dist: (yes) =>
         -- Build for distribution by building lua files and removing moonscript files.
@@ -130,7 +149,7 @@ class SeleneBuild
             answer = io.read()
 
         if answer == "y" or yes
-            rv = traverse(@\dist_file, @src)
+            rv = traverse(@\dist_file, @src, false)
 
             for file, blocklist in pairs BLOCKLIST_LINES
                 print "Removing blocklist lines from #{file}"
@@ -145,6 +164,16 @@ class SeleneBuild
                 file_h = io.open(file, "w")
                 file_h\write(content)
                 file_h\close()
+
+            -- Kind of a workaround for now, just call it twice to clean up dirs after
+            -- All files are deleted
+            traverse(@\delete_all, "lib/lulpeg", true)
+            traverse(@\delete_all, "lib/lulpeg", true)
+            lfs.rmdir("lib/lulpeg")
+            traverse(@\delete_all, "lib/moonscript", true)
+            traverse(@\delete_all, "lib/moonscript", true)
+            lfs.rmdir("lib/moonscript")
+            
         else
             print "Aborting: '#{answer}' is not y"
             rv = ERR
