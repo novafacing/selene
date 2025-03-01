@@ -77,7 +77,7 @@ class SeleneBuild
     clean_file: (path) =>
         -- Clean a .lua file. Called as a callback by the
         -- directory traversal. Returns OK on success, and cannot fail
-        if path\match("^.+%.lua$")
+        if path\match("^.+%.lua$") and not path\match("conf.lua") and not path\match("main.lua")
             os.remove(path)
             print "Removed #{path}"
 
