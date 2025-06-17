@@ -14,7 +14,7 @@ export class Game
         -- and that's it!
         @player = Player!
 
-    keypressed: (key, scancode, isrepeat) ->
+    keypressed: (key, scancode, isrepeat) =>
         -- Called when a key is pressed. We will check for keypresses in
         -- our player's update function for movement, so this just serves
         -- as a way to quit the game.

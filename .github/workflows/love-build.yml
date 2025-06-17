@@ -38,12 +38,12 @@ jobs:
     - name: Compile Project
       run: moon build.moon src -d -y
     # Build the applications
-    - uses: nhartland/love-build@master
+    - uses: nhartland/love-build@main
       with:
        app_name: ${{ steps.project_name.outputs.name }}
        love_version: '11.4'
     # Upload the built applications
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: built-applications
         path: 'release'
