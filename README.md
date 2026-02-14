@@ -115,7 +115,7 @@ There is a build/test script `build.moon` provided that works automatically with
 template repo. You can invoke it to run tests like:
 
 ```sh
-$ moon build.moon --test
+$ moon build.moon src --test
 ```
 
 It will run `busted` tests on all files matching a pattern, which defaults to 
